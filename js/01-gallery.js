@@ -4,10 +4,10 @@ const listEl = document.querySelector(".gallery");
 const everyEl = renderList(galleryItems);
 listEl.insertAdjacentHTML("beforeend", everyEl);
 
-
-function renderList (items) {
-    return items.map(({ preview, original, description }) => {
-    return `<li class="gallery__item">
+function renderList(items) {
+  return items
+    .map(({ preview, original, description }) => {
+      return `<li class="gallery__item">
   <a class="gallery__link" href="${original}">
     <img
       class="gallery__image"
@@ -16,10 +16,10 @@ function renderList (items) {
       width="300" height="225"
     />
   </a>
-</li>`
+</li>`;
     })
- .join("")
-};
+    .join("");
+}
 listEl.addEventListener("click", handleListClick);
 function handleListClick(event) {
   event.preventDefault();
@@ -31,21 +31,18 @@ function handleListClick(event) {
   const modalInstance = basicLightbox.create(
     `<img src="${originalImg}" width="800" height="600">`,
     {
-      show: (modalinstance) => {
+      onShow: (modalinstance) => {
         window.addEventListener("keydown", handler);
       },
-      close: (modalinstance) => {
+      onClose: (modalinstance) => {
         window.removeEventListener("keydown", handler);
       },
     }
   );
   modalInstance.show();
-}
-function handler(e) {
-  if (e.code === "Escape") {
-    return;
+  function handler(e) {
+    if (e.code === "Escape") {
+      modalInstance.close();
+    }
   }
-  modalInstance.close();
 }
-
-
