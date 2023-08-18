@@ -1,11 +1,11 @@
-import { galleryItems } from './gallery-items.js';
+import { galleryItems } from "./gallery-items.js";
 // Change code below this line
 const listEl = document.querySelector(".gallery");
-const renderList = (arr) => 
-    arr 
-        .map(
-            (item) =>
-           `<li data-id ="id" class="gallery__item">
+const renderList = (arr, container) => {
+  const markup = arr
+    .map(
+      (item) =>
+        `<li class="gallery__item">
   <a class="gallery__link" href="${item.original}">
     <img
       class="gallery__image lazyload"
@@ -16,28 +16,40 @@ const renderList = (arr) =>
     />
   </a>
 </li>`
-        )
-        .join("");
+    )
+    .join("");
 
+  container.insertAdjacentHTML("beforeend", markup);
+};
+function handleListClick(event) {
+  event.preventDefault();
+  const imgGal = event.target;
 
-const handleListClick = (event) => {
-    if (event.currentTarget === event.target) {
-        return;
+  if (imgGal.nodeName !== "IMG") {
+    return;
+  }
+  const originalImg = imgGal.parentNode.href;
+
+  const modalInstance = basicLightbox.create(
+    `<img src="${originalImg}" width="800" height="600">`,
+    {
+      onShow: (modalinstance) => {
+        window.addEventListener("keydown", keyPress);
+      },
+      onClose: (modalinstance) => {
+        window.removeEventListener("keydown", keyPress);
+      },
     }
+  );
+  modalInstance.show();
+}
 
-    const currentListItem = event.target.closest('.gallery__item');
-    const itemId = currentListItem.dataset.id;
-    const everyGalleryItems = galleryItems.find((item) => item.id === +itemId);
-    const modalInstance = basicLightbox.create(`<div class="modal">
-    <img src="${galleryItems.original}" 
-    width="1000" height="750"/>
-    </div>`)
+function keyPress(e) {
+  if (e.code === "Escape") {
+    return;
+  }
+  modalInstance.close();
+}
 
-modalInstance.show()
-        }
-listEl.insertAdjacentHTML("beforeend", renderList(galleryItems));
-
+renderList(galleryItems, listEl);
 listEl.addEventListener("click", handleListClick);
-
-
-
